@@ -1,9 +1,11 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:transparent_image/transparent_image.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       home: HomeScreen(),
     );
   }
@@ -54,14 +56,16 @@ class HomeScreen extends StatelessWidget {
           child: Text(
             'NOMAD BOX',
             style: GoogleFonts.russoOne(
-                fontSize: 26.0,
+                fontSize: 24.0,
                 fontWeight: FontWeight.w600,
-                color: mainColor,
+                color: Colors.white.withOpacity(
+                  0.9,
+                ),
                 shadows: <Shadow>[
                   const Shadow(
-                    offset: Offset(1.5, 1.5),
+                    offset: Offset(2.5, 2.5),
                     blurRadius: 2.0,
-                    color: Colors.white,
+                    color: mainColor,
                   )
                 ]),
           ),
@@ -211,269 +215,217 @@ ListView makeList(
       final calculateDay =
           DateTime.parse(movie.releaseDate).difference(today).inDays;
 
-      return Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
+      return GestureDetector(
+        onTap: () {
+          Get.to(
+            () => DetailScreen(
+              title: movie.title,
+              id: movie.id,
+              lang: movie.lang,
+              poster: movie.poster,
+              averageVote: movie.averageVote,
+              voteCount: movie.voteCount,
+              thumb: movie.thumb,
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15.0),
-              child: SizedBox(
-                width: boxWidth,
-                child: Stack(
-                  children: [
-                    SizedBox(
-                      height: boxHeight,
-                      // if theres no backdrop image, replace it with poster image
-                      child: movie.thumb != null
-                          ? FadeInImage.memoryNetwork(
-                              placeholder: kTransparentImage,
-                              image:
-                                  'https://image.tmdb.org/t/p/w500${movie.thumb}',
-                              fit: BoxFit.cover,
-                            )
-                          : FadeInImage.memoryNetwork(
-                              width: boxWidth,
-                              placeholder: kTransparentImage,
-                              image:
-                                  'https://image.tmdb.org/t/p/w500${movie.poster}',
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    // shadow behind rating
-                    if (isPopularSection)
-                      Container(
-                        width: boxWidth,
+            transition: Transition.fade,
+            duration: const Duration(
+              milliseconds: 650,
+            ),
+          );
+        },
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: SizedBox(
+                  width: boxWidth,
+                  child: Stack(
+                    children: [
+                      SizedBox(
                         height: boxHeight,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: sectionColor.withOpacity(0.5),
-                              offset: const Offset(0, 130),
-                              spreadRadius: 10,
-                              blurRadius: 70,
+                        // if theres no backdrop image, replace it with poster image
+                        child: movie.thumb != null
+                            ? FadeInImage.memoryNetwork(
+                                width: boxWidth,
+                                placeholder: kTransparentImage,
+                                image:
+                                    'https://image.tmdb.org/t/p/w500${movie.thumb}',
+                                fit: BoxFit.cover,
+                              )
+                            : FadeInImage.memoryNetwork(
+                                width: boxWidth,
+                                placeholder: kTransparentImage,
+                                image:
+                                    'https://image.tmdb.org/t/p/w500${movie.poster}',
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                      // shadow behind rating
+                      if (isPopularSection)
+                        Container(
+                          width: boxWidth,
+                          height: boxHeight,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: sectionColor.withOpacity(0.5),
+                                offset: const Offset(0, 130),
+                                spreadRadius: 10,
+                                blurRadius: 70,
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (isPopularSection)
+                        Positioned(
+                          left: 8,
+                          top: 104,
+                          child: Text(
+                            '${index + 1}',
+                            style: GoogleFonts.russoOne(
+                              fontSize: 60.0,
+                              color: backgroundColor,
+                              fontStyle: FontStyle.italic,
                             ),
+                          ),
+                        ),
+
+                      Positioned(
+                        right: isPopularSection ? 8 : 8,
+                        top: isPopularSection ? 136 : 97,
+                        child: movie.lang == 'en'
+                            ? const LangTextWidget(
+                                langText: 'ENG',
+                              )
+                            : movie.lang == 'ko'
+                                ? const LangTextWidget(langText: 'KOR')
+                                : const LangTextWidget(langText: 'SPA'),
+                      ),
+                      // d-day widget
+                      if (isComingSoonSection)
+                        Positioned(
+                          top: 5,
+                          left: 5,
+                          child: CircleAvatar(
+                            backgroundColor: pink,
+                            radius: 16.0,
+                            child: Text(
+                              'D-${calculateDay + 1}',
+                              style: GoogleFonts.rubik(
+                                fontSize: 13.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // movie title
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 7.0),
+              child: SizedBox(
+                width: textWidth,
+                child: Column(
+                  children: [
+                    Text(
+                      movie.title,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.rubik(
+                        fontSize: fontSize,
+                        color: Colors.white.withOpacity(0.9),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: isPopularSection ? 1 : 2,
+                      // maxLines: 2,
+                    ),
+                    if (isNowSection && movie.title.length < 16)
+                      const SizedBox(
+                        height: 15.0,
+                      ),
+                    if (isPopularSection || isNowSection)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (isPopularSection)
+                              // popularity
+                              Text(
+                                '${(movie.popularity * 0.01).toStringAsFixed(1)}%',
+                                style: GoogleFonts.rubik(
+                                  color: textColor,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            // separator
+                            if (isPopularSection)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text('|',
+                                    style: GoogleFonts.rubik(
+                                      color: textColor,
+                                      fontSize: 12.0,
+                                    )),
+                              ),
+                            const IconWidget(
+                              icon: Icons.thumb_up_alt_outlined,
+                              color: green,
+                            ),
+                            // vote
+                            Text(
+                              '${movie.voteCount}',
+                              style: GoogleFonts.rubik(
+                                color: textColor,
+                                fontSize: isPopularSection ? 13 : 12,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5.0),
+                              child: Icon(
+                                Icons.circle,
+                                color: textColor,
+                                size: isPopularSection ? 5.0 : 4.0,
+                              ),
+                            ),
+                            // rating
+                            const IconWidget(
+                              icon: Icons.star_rounded,
+                              color: yellow,
+                            ),
+                            Text(
+                              movie.averageVote is int
+                                  ? '${movie.averageVote}.0'
+                                  : '${movie.averageVote}',
+                              style: GoogleFonts.rubik(
+                                color: textColor,
+                                fontSize: isPopularSection ? 13 : 12,
+                              ),
+                            )
                           ],
                         ),
                       ),
-                    if (isPopularSection)
-                      Positioned(
-                        left: 8,
-                        top: 104,
-                        child: Text(
-                          '${index + 1}',
-                          style: GoogleFonts.russoOne(
-                            fontSize: 60.0,
-                            color: backgroundColor,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ),
-
-                    Positioned(
-                      right: isPopularSection ? 8 : 8,
-                      top: isPopularSection ? 136 : 97,
-                      child: movie.lang == 'en'
-                          ? const LangTextWidget(
-                              langText: 'ENG',
-                            )
-                          : movie.lang == 'ko'
-                              ? const LangTextWidget(langText: 'KOR')
-                              : const LangTextWidget(langText: 'SPA'),
-                    ),
-                    // d-day widget
-                    if (isComingSoonSection)
-                      Positioned(
-                        top: 5,
-                        left: 5,
-                        child: CircleAvatar(
-                          backgroundColor: pink,
-                          radius: 16.0,
-                          child: Text(
-                            'D-${calculateDay + 1}',
-                            style: GoogleFonts.rubik(
-                              fontSize: 13.0,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      )
+                    if (isPopularSection) const BookNowButton(),
                   ],
                 ),
               ),
             ),
-          ),
-
-          // movie title
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 7.0),
-            child: SizedBox(
-              width: textWidth,
-              child: Column(
-                children: [
-                  Text(
-                    movie.title,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.rubik(
-                      fontSize: fontSize,
-                      color: Colors.white.withOpacity(0.9),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: isPopularSection ? 1 : 2,
-                    // maxLines: 2,
-                  ),
-                  if (isNowSection && movie.title.length < 16)
-                    const SizedBox(
-                      height: 15.0,
-                    ),
-                  if (isPopularSection || isNowSection)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (isPopularSection)
-                            // popularity
-                            Text(
-                              '${(movie.popularity * 0.01).toStringAsFixed(1)}%',
-                              style: GoogleFonts.rubik(
-                                color: textColor,
-                                fontSize: 13,
-                              ),
-                            ),
-                          // separator
-                          if (isPopularSection)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text('|',
-                                  style: GoogleFonts.rubik(
-                                    color: textColor,
-                                    fontSize: 12.0,
-                                  )),
-                            ),
-                          const IconWidget(
-                            icon: Icons.thumb_up_alt_outlined,
-                            color: green,
-                          ),
-                          // vote
-                          Text(
-                            '${movie.voteCount}',
-                            style: GoogleFonts.rubik(
-                              color: textColor,
-                              fontSize: isPopularSection ? 13 : 12,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0),
-                            child: Icon(
-                              Icons.circle,
-                              color: textColor,
-                              size: isPopularSection ? 5.0 : 4.0,
-                            ),
-                          ),
-                          // rating
-                          const IconWidget(
-                            icon: Icons.star_rounded,
-                            color: yellow,
-                          ),
-                          Text(
-                            movie.averageVote is int
-                                ? '${movie.averageVote}.0'
-                                : '${movie.averageVote}',
-                            style: GoogleFonts.rubik(
-                              color: textColor,
-                              fontSize: isPopularSection ? 13 : 12,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  if (isPopularSection) const BookNowButton(),
-                ],
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       );
     },
     separatorBuilder: (context, index) => const SizedBox(width: 15),
   );
 }
-
-// class PopularityWidget extends StatelessWidget {
-//   const PopularityWidget({
-//     super.key,
-//     required this.movie,
-//   });
-
-//   final MovieData movie;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 6.0),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           // popularity
-//           Text(
-//             '${(movie.popularity * 0.01).toStringAsFixed(1)}%',
-//             style: GoogleFonts.rubik(
-//               color: textColor,
-//               fontSize: 13,
-//             ),
-//           ),
-//           // separator
-//           Padding(
-//             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-//             child: Text('|',
-//                 style: GoogleFonts.rubik(
-//                   color: textColor,
-//                   fontSize: 12.0,
-//                 )),
-//           ),
-//           const IconWidget(
-//             icon: Icons.thumb_up_alt_outlined,
-//             color: green,
-//           ),
-//           // vote
-//           Text(
-//             '${movie.voteCount}',
-//             style: GoogleFonts.rubik(
-//               color: textColor,
-//               fontSize: 13,
-//             ),
-//           ),
-//           const Padding(
-//             padding: EdgeInsets.only(left: 5.0),
-//             child: Icon(
-//               Icons.circle,
-//               color: textColor,
-//               size: 5.0,
-//             ),
-//           ),
-//           // rating
-//           const IconWidget(
-//             icon: Icons.star_rounded,
-//             color: yellow,
-//           ),
-//           Text(
-//             movie.averageVote is int
-//                 ? '${movie.averageVote}.0'
-//                 : '${movie.averageVote}',
-//             style: GoogleFonts.rubik(
-//               color: textColor,
-//               fontSize: 13,
-//             ),
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class BookNowButton extends StatelessWidget {
   const BookNowButton({
@@ -645,4 +597,47 @@ class MovieData {
         averageVote = json['vote_average'],
         voteCount = json['vote_count'],
         lang = json['original_language'];
+}
+
+class DetailScreen extends StatelessWidget {
+  final String title, id, lang;
+  final String? poster, thumb;
+  final dynamic averageVote;
+  final int voteCount;
+
+  const DetailScreen({
+    Key? key,
+    required this.title,
+    required this.id,
+    required this.lang,
+    required this.poster,
+    required this.averageVote,
+    required this.voteCount,
+    required this.thumb,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                iconTheme: const IconThemeData(color: sectionColor),
+                expandedHeight: MediaQuery.of(context).size.height,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Image.network(
+                    'https://image.tmdb.org/t/p/w500$poster',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
