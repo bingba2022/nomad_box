@@ -1,11 +1,14 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:transparent_image/transparent_image.dart';
 import 'package:get/get.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,6 +23,10 @@ const textColor = Color(0xFFc0caf5);
 const yellow = Color(0xFFdec76e);
 const green = Color(0xFF9ece6a);
 const pink = Color(0xFFf7768e);
+const orange = Color(0xFFb26a46);
+const blue = Color(0xFF057b91);
+const burgundy = Color(0xFF800020);
+const cream = Color(0xFFffe5b4);
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -70,14 +77,6 @@ class HomeScreen extends StatelessWidget {
                 ]),
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.menu),
-            color: sectionColor,
-            iconSize: 30.0,
-          )
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -100,7 +99,7 @@ class HomeScreen extends StatelessWidget {
               sectionTitle: 'Now in Cinemas',
               boxHeight: 120.0,
               boxWidth: 110.0,
-              textWidth: 110.0,
+              textWidth: 111.0,
               textSize: 12.5,
               isPoularSection: false,
               isNowSection: true,
@@ -229,7 +228,7 @@ ListView makeList(
             ),
             transition: Transition.fade,
             duration: const Duration(
-              milliseconds: 650,
+              milliseconds: 200,
             ),
           );
         },
@@ -414,7 +413,15 @@ ListView makeList(
                           ],
                         ),
                       ),
-                    if (isPopularSection) const BookNowButton(),
+                    if (isPopularSection)
+                      BookNowButton(
+                        text: 'Book Now',
+                        fontSize: 12.0,
+                        boxHeignt: 28.0,
+                        boxWidth: 100.0,
+                        fontWeight: FontWeight.w500,
+                        id: movie.id,
+                      ),
                   ],
                 ),
               ),
@@ -430,36 +437,78 @@ ListView makeList(
 class BookNowButton extends StatelessWidget {
   const BookNowButton({
     super.key,
+    required this.fontSize,
+    required this.boxHeignt,
+    required this.boxWidth,
+    required this.text,
+    required this.fontWeight,
+    required this.id,
   });
+
+  final double fontSize, boxHeignt, boxWidth;
+  final String text, id;
+  final FontWeight fontWeight;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        height: 28.0,
-        width: 100.0,
-        decoration: BoxDecoration(
-          color: textColor,
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: TextButton(
-          onPressed: () {},
-          child: SizedBox(
-            height: 28.0,
-            child: Text(
-              'Book Now',
-              style: GoogleFonts.rubik(
-                fontSize: 12.0,
-                fontWeight: FontWeight.w500,
-                color: backgroundColor,
+    Future<MovieDetailModel> movie;
+    movie = ApiService.getMovieById(id);
+    return FutureBuilder(
+        future: movie,
+        builder: (context, snapshot) {
+          return Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Container(
+              height: boxHeignt,
+              width: boxWidth,
+              decoration: BoxDecoration(
+                color: textColor,
+                borderRadius: BorderRadius.circular(16.0),
               ),
-              textAlign: TextAlign.center,
+              child: TextButton(
+                onPressed: () {
+                  if (snapshot.data!.homepage.isEmpty) {
+                    showDialog(
+                        context: context,
+                        builder: (_) => CupertinoAlertDialog(
+                              title: const Icon(
+                                Icons.warning_rounded,
+                                color: Colors.red,
+                              ),
+                              content: Text(
+                                'Ticket Unavailable',
+                                style: GoogleFonts.rubik(
+                                  fontSize: 15.0,
+                                ),
+                              ),
+                              actions: [
+                                CupertinoDialogAction(
+                                    child: const Text('OK'),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    })
+                              ],
+                            ));
+                  } else {
+                    launchUrl(Uri.parse(snapshot.data!.homepage));
+                  }
+                },
+                child: SizedBox(
+                  height: 28.0,
+                  child: Text(
+                    text,
+                    style: GoogleFonts.rubik(
+                      fontSize: fontSize,
+                      fontWeight: fontWeight,
+                      color: backgroundColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
+        });
   }
 }
 
@@ -578,6 +627,39 @@ class ApiService {
     }
     throw Exception('failed to fetch movies: ${response.statusCode}');
   }
+
+  static Future<MovieDetailModel> getMovieById(String id) async {
+    final url = Uri.parse('$baseUrl/movie?id=$id');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final movie = jsonDecode(response.body);
+
+      MovieDetailModel.fromJson(movie);
+      return MovieDetailModel.fromJson(movie);
+    }
+    throw Error();
+  }
+
+  static Future<List<MovieGenreModel>> getGenres(String id) async {
+    List<MovieGenreModel> genreInstances = [];
+    final url = Uri.parse('$baseUrl/movie?id=$id');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final movie = jsonDecode(response.body);
+      final genres = movie['genres'];
+      for (var genre in genres) {
+        final genreInstance = MovieGenreModel.fromJson(genre);
+        genreInstances.add(genreInstance);
+      }
+
+      return genreInstances;
+    }
+    throw Error();
+  }
+
+  // get each movie detail
 }
 
 class MovieData {
@@ -599,7 +681,26 @@ class MovieData {
         lang = json['original_language'];
 }
 
-class DetailScreen extends StatelessWidget {
+class MovieDetailModel {
+  final String title, overview, homepage;
+  final int runtime;
+
+  MovieDetailModel.fromJson(Map<String, dynamic> json)
+      : title = json['title'],
+        overview = json['overview'],
+        runtime = json['runtime'],
+        homepage = json['homepage'];
+}
+
+class MovieGenreModel {
+  final String name, genreId;
+
+  MovieGenreModel.fromJson(Map<String, dynamic> json)
+      : genreId = json['id'].toString(),
+        name = json['name'];
+}
+
+class DetailScreen extends StatefulWidget {
   final String title, id, lang;
   final String? poster, thumb;
   final dynamic averageVote;
@@ -617,25 +718,300 @@ class DetailScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  late Future<MovieDetailModel> movie;
+  late Future<List<MovieGenreModel>> genre;
+
+  @override
+  void initState() {
+    super.initState();
+    movie = ApiService.getMovieById(widget.id);
+    genre = ApiService.getGenres(widget.id);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                iconTheme: const IconThemeData(color: sectionColor),
-                expandedHeight: MediaQuery.of(context).size.height,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Image.network(
-                    'https://image.tmdb.org/t/p/w500$poster',
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            backgroundColor: Colors.transparent,
+            iconTheme: const IconThemeData(color: Colors.white),
+            expandedHeight: MediaQuery.of(context).size.height,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  FadeInImage.memoryNetwork(
+                    placeholder: kTransparentImage,
+                    image: 'https://image.tmdb.org/t/p/w500${widget.poster}',
                     fit: BoxFit.cover,
                   ),
-                ),
-              )
-            ],
-          ),
+                  Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black,
+                          Colors.transparent,
+                        ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        stops: [0.2, 1.0],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end, // temporarily
+
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: Text(widget.title,
+                                style: GoogleFonts.russoOne(
+                                  fontSize: 23.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                )),
+                          ),
+                          RatingBar.builder(
+                            initialRating: widget.averageVote / 2.0,
+                            unratedColor: Colors.white.withOpacity(0.4),
+                            minRating: 0,
+                            maxRating: 5,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemSize: 28.0,
+                            itemBuilder: (context, _) => const Icon(
+                              Icons.star_rounded,
+                              color: yellow,
+                            ),
+                            onRatingUpdate: (rating) {},
+                          ),
+                          SizedBox(
+                            height: 60.0,
+                            width: 300.0,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 15.0,
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FutureBuilder(
+                                    future: movie,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        int mins = snapshot.data!.runtime;
+                                        int hrs = mins ~/ 60;
+                                        int remainingMins = mins % 60;
+                                        return Text(
+                                          '${hrs}h ${remainingMins}min',
+                                          style: GoogleFonts.rubik(
+                                            color: Colors.white,
+                                            fontSize: 14.0,
+                                          ),
+                                        );
+                                      }
+                                      return const Text('....');
+                                    },
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6.0),
+                                    child: Text(
+                                      '|',
+                                      style: GoogleFonts.rubik(
+                                        color: Colors.white,
+                                        fontSize: 14.0,
+                                      ),
+                                    ),
+                                  ),
+                                  FutureBuilder(
+                                    future: genre,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        return Expanded(
+                                          child: Wrap(
+                                            spacing: 5.0,
+                                            runSpacing: 5.0,
+                                            children: List.generate(
+                                                snapshot.data!.length, (index) {
+                                              return Container(
+                                                width: 70,
+                                                height: 20,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black
+                                                      .withOpacity(0.4),
+                                                  border: Border.all(
+                                                      width: 2.0,
+                                                      color: snapshot
+                                                                  .data![index]
+                                                                  .name ==
+                                                              'Animation'
+                                                          ? pink
+                                                          : snapshot
+                                                                      .data![
+                                                                          index]
+                                                                      .name ==
+                                                                  'Adventure'
+                                                              ? green
+                                                              : snapshot
+                                                                          .data![
+                                                                              index]
+                                                                          .name ==
+                                                                      'Family'
+                                                                  ? yellow
+                                                                  : snapshot.data![index].name ==
+                                                                          'Fantasy'
+                                                                      ? mainColor
+                                                                      : snapshot.data![index].name ==
+                                                                              'Comedy'
+                                                                          ? orange
+                                                                          : snapshot.data![index].name == 'Action'
+                                                                              ? blue
+                                                                              : snapshot.data![index].name == 'Science Fiction'
+                                                                                  ? cream
+                                                                                  : snapshot.data![index].name == 'Thriller'
+                                                                                      ? burgundy
+                                                                                      : snapshot.data![index].name == 'Crime'
+                                                                                          ? sectionColor
+                                                                                          : Colors.white30),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          30.0),
+                                                ),
+                                                child: Align(
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    snapshot.data![index].name,
+                                                    textAlign: TextAlign.center,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: GoogleFonts.rubik(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 11.0,
+                                                      color: snapshot
+                                                                  .data![index]
+                                                                  .name ==
+                                                              'Animation'
+                                                          ? pink
+                                                          : snapshot
+                                                                      .data![
+                                                                          index]
+                                                                      .name ==
+                                                                  'Adventure'
+                                                              ? green
+                                                              : snapshot
+                                                                          .data![
+                                                                              index]
+                                                                          .name ==
+                                                                      'Family'
+                                                                  ? yellow
+                                                                  : snapshot.data![index].name ==
+                                                                          'Fantasy'
+                                                                      ? mainColor
+                                                                      : snapshot.data![index].name ==
+                                                                              'Comedy'
+                                                                          ? orange
+                                                                          : snapshot.data![index].name == 'Action'
+                                                                              ? blue
+                                                                              : snapshot.data![index].name == 'Science Fiction'
+                                                                                  ? cream
+                                                                                  : snapshot.data![index].name == 'Thriller'
+                                                                                      ? burgundy
+                                                                                      : snapshot.data![index].name == 'Crime'
+                                                                                          ? sectionColor
+                                                                                          : Colors.white30,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                          ),
+                                        );
+                                      }
+                                      return const Text(
+                                        '...',
+                                      );
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 23.0,
+                          ),
+                          Text(
+                            'Storyline',
+                            style: GoogleFonts.rubik(
+                              color: Colors.white,
+                              fontSize: 23.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          FutureBuilder(
+                            future: movie,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 40.0,
+                                        top: 10.0,
+                                      ),
+                                      child: Text(snapshot.data!.overview,
+                                          style: GoogleFonts.rubik(
+                                            color: Colors.white,
+                                            fontSize: 15.0,
+                                            fontWeight: FontWeight.w500,
+                                            height: 1.5,
+                                          )),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 50.0,
+                                        bottom: 110.0,
+                                      ),
+                                      child: BookNowButton(
+                                        fontSize: 20.0,
+                                        boxHeignt: 50.0,
+                                        boxWidth: 250.0,
+                                        text: 'Buy Ticket',
+                                        fontWeight: FontWeight.w600,
+                                        id: widget.id,
+                                      ),
+                                    )
+                                  ],
+                                );
+                              }
+                              return const Text('...');
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );
