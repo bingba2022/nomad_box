@@ -39,7 +39,7 @@
     <a href="https://github.com/bingba2022/nomad_box"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+<!--     <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a> -->
   </p>
 </div>
 
@@ -57,10 +57,10 @@
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
-      <ul>
+<!--       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
-      </ul>
+      </ul> -->
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
