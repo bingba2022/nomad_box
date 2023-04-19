@@ -821,7 +821,8 @@ class _DetailScreenState extends State<DetailScreen> {
                                         return Text(
                                           '${hrs}h ${remainingMins}min',
                                           style: GoogleFonts.rubik(
-                                            color: Colors.white,
+                                            color:
+                                                Colors.white.withOpacity(0.7),
                                             fontSize: 14.0,
                                           ),
                                         );
@@ -835,7 +836,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                     child: Text(
                                       '|',
                                       style: GoogleFonts.rubik(
-                                        color: Colors.white,
+                                        color: Colors.white.withOpacity(0.7),
                                         fontSize: 14.0,
                                       ),
                                     ),
@@ -960,7 +961,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           Text(
                             'Storyline',
                             style: GoogleFonts.rubik(
-                              color: Colors.white,
+                              color: textColor,
                               fontSize: 23.0,
                               fontWeight: FontWeight.w600,
                             ),
@@ -986,7 +987,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                        top: 50.0,
+                                        top: 30.0,
                                         bottom: 110.0,
                                       ),
                                       child: BookNowButton(
