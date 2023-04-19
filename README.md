@@ -125,7 +125,7 @@ _Below is an example of how you can instruct your audience on installing and set
 ## Usage
 
 A project demo
-![Demo](http://i.imgur.com/60bts.gif)
+![Demo](https://github.com/bingba2022/nomad_box/blob/master/readme/images/project_demo.gif?raw=true)
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
