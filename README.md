@@ -125,9 +125,10 @@ _Below is an example of how you can instruct your audience on installing and set
 ## Usage
 
 A project demo
-![Demo](https://github.com/bingba2022/nomad_box/blob/master/readme/images/project_demo.gif?raw=true)
 
-
+<p align="center">
+ <img src="https://github.com/bingba2022/nomad_box/blob/master/readme/images/project_demo.gif?raw=true" width="200"/>
+</p>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
