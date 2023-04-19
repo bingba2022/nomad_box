@@ -87,15 +87,15 @@ This is a simple Movie App built for challenge, using the API provided by Nomad 
 
 ### Built With
 
-* [![Flutter][flutter]][Next-url]
-* [![Dart][dart]][React-url]
+* [![Flutter][flutter]][flutter-url]
+* [![Dart][dart]][dart-url]
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- GETTING STARTED -->
+<!-- GETTING STARTED
 ## Getting Started
 
 This is an example of how you may give instructions on setting up your project locally.
@@ -127,7 +127,7 @@ _Below is an example of how you can instruct your audience on installing and set
    const API_KEY = 'ENTER YOUR API';
    ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 
@@ -136,7 +136,6 @@ _Below is an example of how you can instruct your audience on installing and set
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -145,22 +144,17 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
-
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+- [x] Add Home Screen
+- [x] Add Detail Screen for each movie
+- [x] url links to the movie details
+- [ ] Add User Profile
+- [ ] Add Setting
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
 <!-- CONTRIBUTING -->
-## Contributing
+<!-- ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -171,27 +165,27 @@ Don't forget to give the project a star! Thanks again!
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+5. Open a Pull Request -->
+<!-- 
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 
 <!-- LICENSE -->
-## License
+<!-- ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+ -->
 
 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Your Name - [Email](bh928010@gmail.com) - email@example.com
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/bingba2022/nomad_box](https://github.com/bingba2022/nomad_box)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
