@@ -87,8 +87,6 @@ This is a simple Movie App built for challenge, using the API provided by Nomad 
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
 * [![Flutter][flutter]][Next-url]
 * [![Dart][dart]][React-url]
 
@@ -233,6 +231,6 @@ Use this space to list resources you find helpful and would like to give credit 
 [linkedin-url]: https://linkedin.com/in/othneildrew
 [product-screenshot]: readme/images/screenshot.png
 [flutter]: https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white
-[Next-url]: https://nextjs.org/
+[flutter-url]: https://flutter.dev/
 [dart]: https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white
-[React-url]: https://reactjs.org/
+[dart-url]: https://dart.dev/
