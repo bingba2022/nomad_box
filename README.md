@@ -18,13 +18,13 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][[Bohyun Kim]][[https://github.com/bingba2022]
+<!-- [![Contributors][[Bohyun Kim]][[https://github.com/bingba2022]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
-
+ -->
 
 
 <!-- PROJECT LOGO -->
